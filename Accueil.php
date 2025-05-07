@@ -1,16 +1,4 @@
 <?php
-require_once("cn.php");
-if (isset($_POST['rech'])) {
-    extract($_POST);
-    if ($rech == "1") {
-        $affFac = $con->prepare("SELECT * FROM facture WHERE paye=0 AND 
-                numero=?");
-        $affFac->execute([$recherche]);
-    }
-} else {
-    $affFac = $con->query("SELECT * FROM facture WHERE paye=0 ");
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -18,7 +6,7 @@ if (isset($_POST['rech'])) {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Facturation</title>
+    <title>Accueil</title>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/bootstrap.js" type="text/javascript"></script>
@@ -27,90 +15,108 @@ if (isset($_POST['rech'])) {
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-10 col-md-offset-2">
-                <nav class="navbar navbar-default" role="navigation">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">
-                            <img src="logo.png" class="img-rounded" width="45" height="45" alt="Logo">
-                        </a>
+            <div class="col-md-12">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#" class="glyphicon glyphicon-home">Home</a>
+                    </li>
+                    <li class="glyphicon">
+                        <a href="#" class="glyphicon-plane">Voyages</a>
+                    </li>
+                    <li class="glyphicon">
+                        <a href="#" class="glyphicon glyphicon-user">Profile utilisateur</a>
+                    </li>
+                </ul>
+
+                <br>
+
+                <div class="bg-primary well">
+                    <div class="container-fluid">
+                        <button class="btn btn-default">+ Nouveau pèlerin</button>
+                        <div class="pull-right">
+                            <input type="text" placeholder="Rechercher" class="form-control input-sm" style="display:inline-block; width: 200px;">
+                            <button class="btn btn-default btn-sm">Rechercher</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 sidebar">
+                        <ul class="list-group">
+                            <li class="list-group-item active">                        
+                                <span class="glyphicon glyphicon-th-list"></span>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-user"></span> Les pèlerins <span class="badge">352</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-plane"></span> Hadj <span class="badge">56</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-plane"></span> Oumra <span class="badge">21</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-cog"></span> Paramètres voyages
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="#" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-user"></span> Partenaires <span class="badge">1</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                                <a href="logout.php" class="text-decoration-none">
+                                    <span class="glyphicon glyphicon-log-out"></span> Déconnexion
+                                </a>
+                            </li>
+                        </ul>
                     </div>
 
-                    <ul class="nav navbar-nav">
-                        <li class="active">
-                            <a href="#">
-                                <i class="glyphicon glyphicon-home"></i> Accueil
-                            </a>
-                        </li>
-                        <li>
-                            <form action="accueil.php" method="POST" class="navbar-form navbar-left" role="search">
-                                <div class="form-group">
-                                    <input name="recherche" type="text" class="form-control" placeholder="N° de facture: 14567665G78">
-                                </div>
-                                <button type="submit" name="rech" value="1" class="btn btn-primary">
-                                    <i class="glyphicon glyphicon-search"></i> Rechercher
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="#">
-                                <i class="glyphicon glyphicon-log-out"></i> Déconnexion
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <table class="table table-striped table-hover table-bordered">
-                    <thead>
-                        <tr class="info">
-                            <th>Numéro de facture</th>
-                            <th>Mois</th>
-                            <th>Montant</th>
-                            <th>Cocher</th>
-                            <th>Menu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($tabFact = $affFac->fetch()) { ?>
-                            <tr>
-                                <td><?php echo $tabFact['numero'] ?></td>
-                                <td><?php echo $tabFact['mois'] ?></td>
-                                <td><?php echo $tabFact['montant'] ?></td>
-                                <td>
-                                    <input type="checkbox">
-                                </td>
-                                <td>
-                                    <button class="btn btn-default"
-                                        data-target="#Ajoutnum<?php echo $tabFact['idfacture'] ?>" data-toggle="modal">
-
-                                        <i class="glyphicon glyphicon-ok"></i>&nbsp; Payer</button>
-                                </td>
-                            </tr>
-                            <!-- Modal pour ajouter une tache-->
-                            <div class="modal fade" id="Ajoutnum<?php echo $tabFact['idfacture'] ?>" tabindex="-1" aria-hidden="true" aria-labelledby="newnum" role="dialog">
-                                <div class="modal-dialog">
-                                    <div class="modal-content content-md">
-                                        <div class="modal-header">
-                                            <h4 class="modal-title"><?php echo $tabFact['numero'] ?></h4>
+                    <div class="col-md-9">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="info">
+                                    <th>#</th>
+                                    <th>Photo</th>
+                                    <th>Pèlerin</th>
+                                    <th>Voyage</th>
+                                    <th>Versement(%)</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2541</td>
+                                    <td><img src="" class="photo-thumbnail" alt="photo"></td>
+                                    <td>Almou Bassirou</td>
+                                    <td>Hadj 2018</td>
+                                    <td>950000 (85%)</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
+                                                <span class="glyphicon glyphicon-cog"></span> Menu <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="#">Versement</a></li>
+                                                <li><a href="#">Imprimer le reçu</a></li>
+                                                <li><a href="#">Détails</a></li>
+                                                <li><a href="#">Modification</a></li>
+                                                <li><a href="#">Supprimer</a></li>
+                                            </ul>
                                         </div>
-                                        <div class="modal-body">
-                                            <form action="facturation.php" method="POST">
-                                                <input type="hidden" value="<?php echo $tabFact['idfacture'] ?>" name="idfacture">
-                                                <input type="hidden" value="<?php echo $tabFact['montant'] ?>" name="montant">
-                                                <input type="number" class="form-control" name="tel" required placeholder="Entrez le numero du telephone"><br><br><br>
-                                                <button type="reset" class="btn btn-default pull-right">Annuler</button>
-                                                <button type="submit" class="btn btn-primary  pull-right" name="action" value="1">Enregistrer</button><br><br>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- fin de Modal pour ajouter une tache-->
-                        <?php } ?>
-
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
