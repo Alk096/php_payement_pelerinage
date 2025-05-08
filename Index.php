@@ -1,4 +1,5 @@
 <?php
+	session_start();
 	// Définir la page active (par exemple, via une variable GET ou une logique serveur)
 	$pageActive = isset($_GET['page']) ? $_GET['page'] : 'connexion';
 
@@ -29,18 +30,24 @@
 					<?php endforeach; ?>
 				</ul>
 				<br><br>
+				<?php if(isset($_SESSION['error'])): ?>
+					<p class="text-danger">
+						<?=$_SESSION['error'] ?>
+						<?php unset($_SESSION['error']); ?>
+					</p>
+				<?php endif ;?>
 				<?php if("connexion" === $pageActive):?>
 					<form method="POST" action="connexion.php">
 						<div class="form-group">
 							<label for="email" class="form-label">Compte</label>
-							<input type="email" name="compte" class="form-control" placeholder="Compte utilisateur" required>
+							<input type="text" name="compte" class="form-control" placeholder="Compte utilisateur" required>
 						</div>
 						<div class="form-group">
 							<label for="password" class="form-label">Mot de passe</label>
 							<input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
 						</div>
 						<div class="checkbox">
-                        	<label><input type="checkbox"> Administrateur ?</label>
+                        	<label><input type="checkbox" value="admin"> Administrateur ?</label>
                     	</div>
 						<button type="submit" name="action" value="1" class="btn btn-info btn-block glyphicon glyphicon-log-in">&nbsp;Connexion </button>
 					</form>
@@ -64,7 +71,7 @@
 						</div>
 						<div class="form-group">
 							<label for="email" class="form-label">Compte</label>
-							<input type="email" name="compte" class="form-control" placeholder="Compte utilisateur" required>
+							<input type="text" name="compte" class="form-control" placeholder="Compte utilisateur" required>
 						</div>
 						<div class="form-group">
 							<label for="password" class="form-label">Mot de passe</label>
