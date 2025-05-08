@@ -1,8 +1,27 @@
 <?php
-$nPelerins = 352;
-$nHagj = 56;
-$nOumra = 21;
+require 'conn.php';
+$base = new Base();
+$nPelerins = $base->connection()->query("SELECT COUNT(*) AS nombre_pelerin
+    FROM pelerin");
+$nPelerins = $nPelerins->fetch();
+$nPelerins = $nPelerins['nombre_pelerin'];
+$nHadj = $base->connection()->query("SELECT COUNT(*) AS nombre_voyageurs
+    FROM demande_preinscription
+    WHERE voyage_souhait = 'Hadj'; ");
+$nHadj = $nHadj->fetch();
+$nHadj = $nHadj['nombre_voyageurs'];
+$nOumra = $base->connection()->query("SELECT COUNT(*) AS nombre_voyageurs
+    FROM demande_preinscription
+    WHERE voyage_souhait = 'Oumra'; ");
+$nOumra = $nOumra->fetch();
+$nOumra = $nOumra['nombre_voyageurs'];
 $nPartenaire = 1;
+
+$pelerins = $base->connection()->query("SELECT p.id AS id,p.nom AS nom,
+p.prenom AS prenom,p.numero_passeport AS numero_passeport,p.nationalite AS nationalite,
+p.num_tel AS num_tel,v.montant as montant
+FROM pelerin AS p,versement AS v 
+WHERE p.id = v.id_pelerin");
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -71,7 +90,7 @@ $nPartenaire = 1;
                                     </div>
                                     <div class="form-group">
                                         <label for="email" class="form-label">Compte</label>
-                                        <input type="email" name="compte" class="form-control" placeholder="Compte utilisateur" required>
+                                        <input type="text" name="compte" class="form-control" placeholder="Compte utilisateur" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="password" class="form-label">Mot de passe</label>
@@ -84,15 +103,6 @@ $nPartenaire = 1;
                                     <div class="form-group">
                                         <label for="numTel" class="form-label">Telephone</label>
                                         <input type="number" name="numTel" class="form-control" placeholder="Numero de telephone" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Je souhaite effectuer:</label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="type_voyage" value="Hadj"> Hadj
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input type="radio" name="type_voyage" value="Oumra"> Oumra
-                                        </label>
                                     </div>
                                     <button type="submit" name="action" value="1" class="btn btn-info btn-block glyphicon glyphicon-pencil">&nbsp;Connexion </button>
                                 </form>
@@ -111,7 +121,7 @@ $nPartenaire = 1;
                                 <span class="glyphicon glyphicon-user"></span> Les pèlerins <span class="badge"><?= $nPelerins ?></span>
                             </li>
                             <li class="list-group-item">
-                                <span class="glyphicon glyphicon-plane"></span> Hadj <span class="badge"><?= $nHagj ?></span>
+                                <span class="glyphicon glyphicon-plane"></span> Hadj <span class="badge"><?= $nHadj ?></span>
                             </li>
                             <li class="list-group-item">
                                 <span class="glyphicon glyphicon-plane"></span> Oumra <span class="badge"><?= $nOumra ?></span>
@@ -195,89 +205,95 @@ $nPartenaire = 1;
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>2541</td>
-                                    <td><img src="" class="photo-thumbnail" alt="photo"></td>
-                                    <td>Almou Bassirou</td>
-                                    <td>Hadj 2018</td>
-                                    <td>950000 (85%)</td>
-                                    <td>
-                                        <div class="dropdown">
-                                            <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
-                                                <span class="glyphicon glyphicon-cog"></span> Menu <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="#" data-toggle="modal" data-target="#versement">Versement</a></li>
-                                                <li><a href="#">Imprimer le reçu</a></li>
-                                                <li><a href="#" data-toggle="modal" data-target="#detail">Détails</a></li>
-                                                <li><a href="#">Modification</a></li>
-                                                <li><a href="#">Supprimer</a></li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- modal versement -->
-                                <div class="modal fade" id="versement" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <p class="glyphicon glyphicon-arrow-down">Versement</p>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="" method="post">
-                                                    <div class="row">
-                                                        <div class="col-md-2">
-                                                        <label for="">Montant a verser</label>
-                                                        </div>
-                                                        <div class="col-md-7">
-                                                            <input type="number" class="form-control" placeholder="Entrer le montant a verser">
-                                                        </div>
-                                                        <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- modal details -->
-                                <div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <p class="glyphicon glyphicon-th-list">&nbsp;Details</p>
-                                            </div>
-                                            <div class="modal-body">
-                                                <ul class="list-group">
-                                                    <li class="list-group-item">
-                                                        <img src="" alt="img" class="photo-thumbnail">
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Nom : Almou
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Prenom : M.Bassirou
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Date de naissance : 1960-01-01
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Lieu de naissance : Maradi
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Passeport : H89-245-125
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Nationalite : Nigerienne
-                                                    </li>
-                                                    <li class="list-group-item">
-                                                        Telephone : 80419005
-                                                    </li>
+                                <?php while ($pelerinTab = $pelerins->fetch()) { ?>
+                                    <pre>
+                                        <?php var_dump($pelerinTab) ?>
+                                    </pre>
+                                    <tr>
+                                        <td><?=$pelerinTab['id'] ?></td>
+                                        <td><img src="" class="photo-thumbnail" alt="photo"></td>
+                                        <td><?=$pelerinTab['nom'].' '.$pelerinTab['prenom'] ?></td>
+                                        <td>Hadj 2018</td>
+                                        <td><?=$pelerinTab['montant']?></td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
+                                                    <span class="glyphicon glyphicon-cog"></span> Menu <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="#" data-toggle="modal" data-target="#versement<?=$pelerinTab['id']?>">Versement</a></li>
+                                                    <li><a href="#">Imprimer le reçu</a></li>
+                                                    <li><a href="#" data-toggle="modal" data-target="#detail<?=$pelerinTab['id']?>">Détails</a></li>
+                                                    <li><a href="#">Modification</a></li>
+                                                    <li><a href="#">Supprimer</a></li>
                                                 </ul>
                                             </div>
+                                        </td>
+                                    </tr>
+                                    <!-- modal versement -->
+                                    <div class="modal fade" id="versement<?=$pelerinTab['id']?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <p class="glyphicon glyphicon-arrow-down">Versement</p>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="versement.php" method="post">
+                                                        <input type="hidden" name="id_pelerin" value="<?=$pelerinTab['id']?>">
+                                                        <div class="row">
+                                                            <div class="col-md-2">
+                                                                <label for="">Montant a verser</label>
+                                                            </div>
+                                                            <div class="col-md-7">
+                                                                <input type="number" name="montant" class="form-control" placeholder="Entrer le montant a verser">
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+
+                                    <!-- modal details -->
+                                    <div class="modal fade" id="detail<?=$pelerinTab['id']?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <p class="glyphicon glyphicon-th-list">&nbsp;Details</p>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul class="list-group">
+                                                        <li class="list-group-item">
+                                                            <img src="" alt="img" class="photo-thumbnail">
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Nom : <?=$pelerinTab['nom']?>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Prenom : <?=$pelerinTab['prenom']?>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Date de naissance : 1960-01-01
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Lieu de naissance : Maradi
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Passeport :<?=$pelerinTab['numero_passeport']?>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Nationalite : <?=$pelerinTab['nationalite']?>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            Telephone : <?=$pelerinTab['num_tel']?>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </tbody>
                         </table>
                     </div>
