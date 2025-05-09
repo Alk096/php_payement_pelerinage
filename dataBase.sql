@@ -34,6 +34,6 @@ CREATE TABLE pelerin(
 CREATE TABLE versement(
     id INT PRIMARY KEY AUTO_INCREMENT,
     id_pelerin INT NOT NULL,
-    montant INT(10) NOT NULL DEFAULT 0,
+    montant INT(10) NOT NULL DEFAULT '0',
     FOREIGN KEY (id_pelerin) REFERENCES pelerin(id)
 );

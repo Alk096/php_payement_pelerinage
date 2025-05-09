@@ -20,8 +20,8 @@ $nPartenaire = 1;
 $pelerins = $base->connection()->query("SELECT p.id AS id,p.nom AS nom,
 p.prenom AS prenom,p.numero_passeport AS numero_passeport,p.nationalite AS nationalite,
 p.num_tel AS num_tel,v.montant as montant
-FROM pelerin AS p,versement AS v 
-WHERE p.id = v.id_pelerin");
+FROM pelerin AS p LEFT JOIN versement AS v 
+ON p.id = v.id_pelerin");
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -206,15 +206,13 @@ WHERE p.id = v.id_pelerin");
                             </thead>
                             <tbody>
                                 <?php while ($pelerinTab = $pelerins->fetch()) { ?>
-                                    <pre>
-                                        <?php var_dump($pelerinTab) ?>
-                                    </pre>
                                     <tr>
                                         <td><?=$pelerinTab['id'] ?></td>
                                         <td><img src="" class="photo-thumbnail" alt="photo"></td>
                                         <td><?=$pelerinTab['nom'].' '.$pelerinTab['prenom'] ?></td>
-                                        <td>Hadj 2018</td>
-                                        <td><?=$pelerinTab['montant']?></td>
+                                        <td>Hadj 2025</td>
+                                        <?php $pourcentage = ($pelerinTab['montant']/1117647)*100 ?>
+                                        <td><?=($pelerinTab['montant'] ? $pelerinTab['montant'] : 0 ).'('.number_format($pourcentage, 2).'%)'?></td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
