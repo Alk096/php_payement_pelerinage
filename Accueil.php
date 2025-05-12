@@ -18,7 +18,7 @@ $nOumra = $nOumra['nombre_voyageurs'];
 $nPartenaire = 1;
 
 $pelerins = $base->connection()->query("SELECT p.id AS id,p.nom AS nom,
-p.prenom AS prenom,p.numero_passeport AS numero_passeport,p.nationalite AS nationalite,
+p.prenom AS prenom,p.img AS img,p.numero_passeport AS numero_passeport,p.nationalite AS nationalite,
 p.num_tel AS num_tel,v.montant as montant
 FROM pelerin AS p LEFT JOIN versement AS v 
 ON p.id = v.id_pelerin");
@@ -71,10 +71,10 @@ ON p.id = v.id_pelerin");
                                 <p>Nouveau pelerin</p>
                             </div>
                             <div class="modal-body">
-                                <form method="POST" action="ajoutPelerin.php">
+                                <form method="POST" action="ajoutPelerin.php" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label for="nom" class="form-label">Nom</label>
-                                        <input type="text" name="nom" class="form-control" placeholder="Entrer le mom" required>
+                                        <input type="text" name="nom" class="form-control" placeholder="Entrer le nom" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="prenom" class="form-label">Prenom</label>
@@ -89,7 +89,7 @@ ON p.id = v.id_pelerin");
                                         <input type="text" name="numPasseport" class="form-control" placeholder="Entrer le numero du passeport" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="email" class="form-label">Compte</label>
+                                        <label for="compte" class="form-label">Compte</label>
                                         <input type="text" name="compte" class="form-control" placeholder="Compte utilisateur" required>
                                     </div>
                                     <div class="form-group">
@@ -104,7 +104,15 @@ ON p.id = v.id_pelerin");
                                         <label for="numTel" class="form-label">Telephone</label>
                                         <input type="number" name="numTel" class="form-control" placeholder="Numero de telephone" required>
                                     </div>
-                                    <button type="submit" name="action" value="1" class="btn btn-info btn-block glyphicon glyphicon-pencil">&nbsp;Connexion </button>
+                                    <div class="form-group">
+                                        <label for="voyageSouhait" class="form-label">Voyage</label>
+                                        <input type="text" name="voyageSouhait" class="form-control" placeholder="Voyage" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="img" class="form-label">Photo</label>
+                                        <input type="file" name="img" class="form-control" accept="image/*" required>
+                                    </div>
+                                    <button type="submit" name="action" value="1" class="btn btn-info btn-block glyphicon glyphicon-pencil">&nbsp;Inscrire</button>
                                 </form>
                             </div>
                         </div>
@@ -207,21 +215,21 @@ ON p.id = v.id_pelerin");
                             <tbody>
                                 <?php while ($pelerinTab = $pelerins->fetch()) { ?>
                                     <tr>
-                                        <td><?=$pelerinTab['id'] ?></td>
-                                        <td><img src="" class="photo-thumbnail" alt="photo"></td>
-                                        <td><?=$pelerinTab['nom'].' '.$pelerinTab['prenom'] ?></td>
+                                        <td><?= $pelerinTab['id'] ?></td>
+                                        <td><img src="<?= $pelerinTab['img'] ?>" class="photo-thumbnail rounded" alt="photo" height="40" width="40"></td>
+                                        <td><?= $pelerinTab['nom'] . ' ' . $pelerinTab['prenom'] ?></td>
                                         <td>Hadj 2025</td>
-                                        <?php $pourcentage = ($pelerinTab['montant']/1117647)*100 ?>
-                                        <td><?=($pelerinTab['montant'] ? $pelerinTab['montant'] : 0 ).'('.number_format($pourcentage, 2).'%)'?></td>
+                                        <?php $pourcentage = ($pelerinTab['montant'] / 1117647) * 100 ?>
+                                        <td><?= ($pelerinTab['montant'] ? $pelerinTab['montant'] : 0) . '(' . number_format($pourcentage, 2) . '%)' ?></td>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-primary dropdown-toggle btn-sm" type="button" data-toggle="dropdown">
                                                     <span class="glyphicon glyphicon-cog"></span> Menu <span class="caret"></span>
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a href="#" data-toggle="modal" data-target="#versement<?=$pelerinTab['id']?>">Versement</a></li>
+                                                    <li><a href="#" data-toggle="modal" data-target="#versement<?= $pelerinTab['id'] ?>">Versement</a></li>
                                                     <li><a href="#">Imprimer le reçu</a></li>
-                                                    <li><a href="#" data-toggle="modal" data-target="#detail<?=$pelerinTab['id']?>">Détails</a></li>
+                                                    <li><a href="#" data-toggle="modal" data-target="#detail<?= $pelerinTab['id'] ?>">Détails</a></li>
                                                     <li><a href="#">Modification</a></li>
                                                     <li><a href="#">Supprimer</a></li>
                                                 </ul>
@@ -229,7 +237,7 @@ ON p.id = v.id_pelerin");
                                         </td>
                                     </tr>
                                     <!-- modal versement -->
-                                    <div class="modal fade" id="versement<?=$pelerinTab['id']?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
+                                    <div class="modal fade" id="versement<?= $pelerinTab['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -237,7 +245,7 @@ ON p.id = v.id_pelerin");
                                                 </div>
                                                 <div class="modal-body">
                                                     <form action="versement.php" method="post">
-                                                        <input type="hidden" name="id_pelerin" value="<?=$pelerinTab['id']?>">
+                                                        <input type="hidden" name="id_pelerin" value="<?= $pelerinTab['id'] ?>">
                                                         <div class="row">
                                                             <div class="col-md-2">
                                                                 <label for="">Montant a verser</label>
@@ -254,7 +262,7 @@ ON p.id = v.id_pelerin");
                                     </div>
 
                                     <!-- modal details -->
-                                    <div class="modal fade" id="detail<?=$pelerinTab['id']?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
+                                    <div class="modal fade" id="detail<?= $pelerinTab['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="newtache" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
@@ -263,13 +271,13 @@ ON p.id = v.id_pelerin");
                                                 <div class="modal-body">
                                                     <ul class="list-group">
                                                         <li class="list-group-item">
-                                                            <img src="" alt="img" class="photo-thumbnail">
+                                                            <img src="<?= $pelerinTab['img'] ?>" alt="img" class="photo-thumbnail" height="40" width="40">
                                                         </li>
                                                         <li class="list-group-item">
-                                                            Nom : <?=$pelerinTab['nom']?>
+                                                            Nom : <?= $pelerinTab['nom'] ?>
                                                         </li>
                                                         <li class="list-group-item">
-                                                            Prenom : <?=$pelerinTab['prenom']?>
+                                                            Prenom : <?= $pelerinTab['prenom'] ?>
                                                         </li>
                                                         <li class="list-group-item">
                                                             Date de naissance : 1960-01-01
@@ -278,13 +286,13 @@ ON p.id = v.id_pelerin");
                                                             Lieu de naissance : Maradi
                                                         </li>
                                                         <li class="list-group-item">
-                                                            Passeport :<?=$pelerinTab['numero_passeport']?>
+                                                            Passeport :<?= $pelerinTab['numero_passeport'] ?>
                                                         </li>
                                                         <li class="list-group-item">
-                                                            Nationalite : <?=$pelerinTab['nationalite']?>
+                                                            Nationalite : <?= $pelerinTab['nationalite'] ?>
                                                         </li>
                                                         <li class="list-group-item">
-                                                            Telephone : <?=$pelerinTab['num_tel']?>
+                                                            Telephone : <?= $pelerinTab['num_tel'] ?>
                                                         </li>
                                                     </ul>
                                                 </div>
